@@ -1,19 +1,20 @@
 FROM centos:7
 
-LABEL version="0.1"
-
 # https://github.com/F00b4rch
 MAINTAINER F00b4rch
 
-RUN yum update -y ; \
-    yum install httpd -y ; \
-    mkdir -p /etc/http/conf/vhosts/ ;\
-    echo "IncludeOptional conf/vhosts/*.conf" > /etc/httpd/conf/httpd.conf
+LABEL Version="0.1"
 
-EXPOSE 8000:80
+RUN yum -y --setopt=tsflags=nodocs update && \
+    yum -y --setopt=tsflags=nodocs install httpd && \
+    yum clean all
 
-COPY site.conf /etc/http/conf/vhosts/
+EXPOSE 80
 
-VOLUME /srv/http/
+# Simple startup script to avoid some issues observed with container restart
+ADD run-httpd.sh /run-httpd.sh
+RUN chmod -v +x /run-httpd.sh
 
-CMD systemctl start httpd
+CMD ["/run-httpd.sh"]
+
+# docker build -t centos_http:7 .
