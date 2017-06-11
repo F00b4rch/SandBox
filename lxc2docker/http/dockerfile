@@ -7,14 +7,19 @@ LABEL Version="0.1"
 
 RUN yum -y --setopt=tsflags=nodocs update && \
     yum -y --setopt=tsflags=nodocs install httpd && \
-    yum clean all
+    yum clean all && \
+    mkdir -p /etc/httpd/conf/vhosts/
+
+#    echo "IncludeOptional conf/vhosts/*.conf" > /etc/httpd/conf/httpd.conf
 
 EXPOSE 80
+
+# Adding vhost config file
+COPY site.conf /etc/httpd/conf/vhosts/
 
 # Simple startup script to avoid some issues observed with container restart
 ADD run-httpd.sh /run-httpd.sh
 RUN chmod -v +x /run-httpd.sh
+RUN chmod -v +x /run-httpd.sh
 
 CMD ["/run-httpd.sh"]
-
-# docker build -t centos_http:7 .
