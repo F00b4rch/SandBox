@@ -1,0 +1,19 @@
+FROM centos:7
+
+LABEL version="0.1"
+
+# https://github.com/F00b4rch
+MAINTAINER F00b4rch
+
+RUN yum update -y ; \
+    yum install httpd -y ; \
+    mkdir -p /etc/http/conf/vhosts/ ;\
+    echo "IncludeOptional conf/vhosts/*.conf" > /etc/httpd/conf/httpd.conf
+
+EXPOSE 8000:80
+
+COPY site.conf /etc/http/conf/vhosts/
+
+VOLUME /srv/http/
+
+CMD systemctl start httpd
