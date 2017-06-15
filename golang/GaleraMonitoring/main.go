@@ -64,7 +64,24 @@ func main() {
 	}
 	log.Printf("Total Nodes : %v", nbSrv)
 
+	mTotalNodes := map[string]int{}
+
 	// If total Nodes is not equal nbSrv
+	for srvName, db := range dbList {
+		_, numb, err := getNumbNodes(db)
+		if err != nil {
+			log.Fatalf("Impossible to get total nodes %v total Nodes = %v Nodes get = %v", err, nbSrv, numb)
+		} else {
+			log.Printf("Number of Nodes counts : %v", numb)
+		}
+		mTotalNodes[srvName] = numb
+	}
+
+	// Diff between count nodes connexion and get nodes SQL
+	err = checkNodesCount(mTotalNodes, nbSrv)
+	if err != nil {
+		fmt.Printf("Nodes count mismatched %s", err)
+	}
 
 }
 
@@ -108,4 +125,25 @@ func numberNodes(nodes map[string]string) (totalsrv int, err error) {
 
 	totalsrv = len(nodes)
 	return
+}
+
+func getNumbNodes(db *sql.DB) (varName string, number int, err error) {
+
+	q := "SHOW GLOBAL STATUS LIKE 'wsrep_cluster_size'"
+	err = db.QueryRow(q).Scan(&varName, &number)
+
+	return
+}
+
+func checkNodesCount(mapNodes map[string]int, totalNodes int) error {
+
+	for _, numb := range mapNodes {
+		if numb == totalNodes {
+			continue
+		}
+		return fmt.Errorf("Number of connected Nodes is not the same, total = %v found = %v", totalNodes, numb)
+	}
+
+	return nil
+
 }
