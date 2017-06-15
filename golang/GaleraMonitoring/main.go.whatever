@@ -1,0 +1,104 @@
+package main
+
+import (
+	"database/sql"
+
+	"log"
+
+	"fmt"
+
+	_ "github.com/go-sql-driver/mysql"
+)
+
+func main() {
+
+	n1, err := sql.Open("mysql", "root:@(172.17.0.2:3306)/")
+	if err != nil {
+		log.Fatalf("Error while connectiong to N1 %v", err)
+	}
+	defer n1.Close()
+
+	n2, err := sql.Open("mysql", "root:@(172.17.0.3:3306)/")
+	if err != nil {
+		log.Fatalf("Error while connectiong to N3 %v", err)
+	}
+	defer n2.Close()
+
+	n3, err := sql.Open("mysql", "root:@(172.17.0.4:3306)/")
+	if err != nil {
+		log.Fatalf("Error while connectiong to N3 %v", err)
+	}
+	defer n3.Close()
+
+	test := []*sql.DB{
+		n1,
+		n2,
+		n3,
+	}
+
+	for _, n := range test {
+		getVersion(n)
+	}
+
+	//
+	getServerUUID(n1)
+	getServerUUID(n2)
+	getServerUUID(n3)
+
+	getClusterStateUUID(n1)
+	getClusterStateUUID(n2)
+	getClusterStateUUID(n3)
+
+}
+
+func getVersion(n *sql.DB) {
+	rows, err := n.Query("select version()")
+	if err != nil {
+		log.Fatal(err)
+	}
+	for rows.Next() {
+		var version string
+		err = rows.Scan(&version)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(version)
+	}
+}
+
+func getServerUUID(n *sql.DB) {
+	rows, err := n.Query("SHOW VARIABLES LIKE \"%server_uuid%\"")
+	if err != nil {
+		log.Fatal(err)
+	}
+	for rows.Next() {
+
+		var server string
+		var uid string
+
+		err = rows.Scan(&server, &uid)
+		if err != nil {
+			log.Fatal(err)
+		}
+		//fmt.Println(server)
+		fmt.Println(uid)
+	}
+}
+
+// This function get wsrep_cluster_state_uuid
+// on all Nodes in the Galera Cluster
+func getClusterStateUUID(db *sql.DB) (string, error) {
+
+	var server, uid string
+
+	q := "SHOW GLOBAL STATUS LIKE 'wsrep_cluster_state_uuid'"
+	err := db.QueryRow(q).Scan(&server, &uid)
+
+	return uid, err
+}
+
+// closerows
+
+func checkClusterStateUUID() {
+
+}

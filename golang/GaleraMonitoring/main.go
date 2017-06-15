@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-
 	"log"
 
 	"fmt"
@@ -10,68 +9,83 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var n *sql.DB
-
 func main() {
 
-	n1, err := sql.Open("mysql", "root:@(172.17.0.2:3306)/")
-	if err != nil {
-		log.Fatalf("Error while connectiong to N1 %v", err)
+	cnx := map[string]string{
+		"n1": "root:@(172.17.0.2:3306)/",
+		"n2": "root:@(172.17.0.3:3306)/",
+		"n3": "root:@(172.17.0.4:3306)/",
 	}
-	defer n1.Close()
 
-	n2, err := sql.Open("mysql", "root:@(172.17.0.3:3306)/")
-	if err != nil {
-		log.Fatalf("Error while connectiong to N3 %v", err)
+	dbList := map[string]*sql.DB{}
+
+	for key, con := range cnx {
+		db, err := sql.Open("mysql", con)
+		if err != nil {
+			log.Fatalf("Error while connecting to server %s : %v", key, err)
+		}
+		defer db.Close()
+		dbList[key] = db
 	}
-	defer n2.Close()
 
-	n3, err := sql.Open("mysql", "root:@(172.17.0.4:3306)/")
-	if err != nil {
-		log.Fatalf("Error while connectiong to N3 %v", err)
+	for srvName, db := range dbList {
+		version, err := getVersion(db)
+		if err != nil {
+			log.Fatalf("Impossible to get version %v", err)
+		}
+		log.Printf("Serveur %s - version %s", srvName, version)
 	}
-	defer n3.Close()
 
-	getVersion(n1)
-	getVersion(n2)
-	getVersion(n3)
+	muid := map[string]string{}
 
-	getServerUUID(n1)
-	getServerUUID(n2)
-	getServerUUID(n3)
+	for srvName, db := range dbList {
+		_, uid, err := getClusterStateUUID(db)
+		if err != nil {
+			log.Fatalf("Impossible to get uid %v", err)
+		}
+		muid[srvName] = uid
+		log.Printf("%s %s", srvName, uid)
+	}
+
+	err := checkUID(muid)
+	if err != nil {
+		log.Fatalf("%s : %v", err, muid)
+	}
 
 }
 
-func getVersion(n *sql.DB) {
-	rows, err := n.Query("select version()")
-	if err != nil {
-		log.Fatal(err)
-	}
-	for rows.Next() {
-		var version string
-		err = rows.Scan(&version)
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println(version)
-	}
+func getVersion(db *sql.DB) (version string, err error) {
+
+	q := "select version()"
+	err = db.QueryRow(q).Scan(&version)
+
+	return
 }
 
-func getServerUUID(n *sql.DB) {
-	rows, err := n.Query("SHOW VARIABLES LIKE \"%server_uuid%\"")
-	if err != nil {
-		log.Fatal(err)
-	}
-	for rows.Next() {
+func getClusterStateUUID(db *sql.DB) (srv, uid string, err error) {
 
-		var server string
-		var uid string
+	q := "SHOW GLOBAL STATUS LIKE 'wsrep_cluster_state_uuid'"
+	err = db.QueryRow(q).Scan(&srv, &uid)
 
-		err = rows.Scan(&server, &uid)
-		if err != nil {
-			log.Fatal(err)
+	return
+
+}
+
+func checkUID(uids map[string]string) error {
+
+	lastUID := ""
+
+	for srv, uid := range uids {
+		if lastUID == "" {
+			lastUID = uid
+			continue
 		}
-		//fmt.Println(server)
-		fmt.Println(uid)
+		if lastUID == uid {
+			continue
+		}
+		return fmt.Errorf("uid : %s of %s does not match", uid, srv)
 	}
+
+	return nil
+
 }
