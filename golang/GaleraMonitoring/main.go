@@ -83,6 +83,7 @@ func main() {
 		fmt.Printf("Nodes count mismatched %s", err)
 	}
 
+	mStatusNodes := map[string]string{}
 	// Get Cluster Status
 	for srvName, db := range dbList {
 		_, status, err := getClusterStatus(db)
@@ -91,10 +92,14 @@ func main() {
 		} else {
 			log.Printf("%v status : %v", srvName, status)
 		}
+		mStatusNodes[srvName] = status
 	}
 
 	// Check if status is != Primary
-
+	err = checkClusterStatus(mStatusNodes)
+	if err != nil {
+		fmt.Printf("Nodes are not Primary %v", err)
+	}
 }
 
 func getVersion(db *sql.DB) (version string, err error) {
@@ -166,5 +171,21 @@ func getClusterStatus(db *sql.DB) (varName, value string, err error) {
 	err = db.QueryRow(q).Scan(&varName, &value)
 
 	return
+
+}
+
+func checkClusterStatus(mapStatus map[string]string) error {
+
+	normalStatus := "Primary"
+
+	for serverName, status := range mapStatus {
+		if status == normalStatus {
+			continue
+		}
+		if status != normalStatus {
+			return fmt.Errorf("Nodes status not primary on %s", serverName)
+		}
+	}
+	return nil
 
 }
