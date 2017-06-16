@@ -6,6 +6,7 @@ import (
 
 	"fmt"
 
+	"github.com/F00b4rch/SandBox/golang/GaleraMonitoring/galera"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -32,7 +33,7 @@ func main() {
 
 	// Get MariaDB version
 	for srvName, db := range dbList {
-		version, err := getVersion(db)
+		version, err := galera.GetVersion(db)
 		if err != nil {
 			log.Fatalf("Impossible to get version %v", err)
 		}
@@ -43,7 +44,7 @@ func main() {
 	muid := map[string]string{}
 
 	for srvName, db := range dbList {
-		_, uid, err := getClusterStateUUID(db)
+		_, uid, err := galera.GetClusterStateUUID(db)
 		if err != nil {
 			log.Fatalf("Impossible to get uid %v", err)
 		}
@@ -68,7 +69,7 @@ func main() {
 
 	// If total Nodes is not equal nbSrv
 	for srvName, db := range dbList {
-		_, numb, err := getNumbNodes(db)
+		_, numb, err := galera.GetNumbNodes(db)
 		if err != nil {
 			log.Fatalf("Impossible to get total nodes %v total Nodes = %v Nodes get = %v", err, nbSrv, numb)
 		} else {
@@ -86,7 +87,7 @@ func main() {
 	mStatusNodes := map[string]string{}
 	// Get Cluster Status
 	for srvName, db := range dbList {
-		_, status, err := getClusterStatus(db)
+		_, status, err := galera.GetClusterStatus(db)
 		if err != nil {
 			log.Fatalf("Impossible to get cluster status %s", err)
 		} else {
@@ -100,23 +101,6 @@ func main() {
 	if err != nil {
 		fmt.Printf("Nodes are not Primary %v", err)
 	}
-}
-
-func getVersion(db *sql.DB) (version string, err error) {
-
-	q := "select version()"
-	err = db.QueryRow(q).Scan(&version)
-
-	return
-}
-
-func getClusterStateUUID(db *sql.DB) (srv, uid string, err error) {
-
-	q := "SHOW GLOBAL STATUS LIKE 'wsrep_cluster_state_uuid'"
-	err = db.QueryRow(q).Scan(&srv, &uid)
-
-	return
-
 }
 
 func checkUID(uids map[string]string) error {
@@ -144,14 +128,6 @@ func numberNodes(nodes map[string]string) (totalsrv int, err error) {
 	return
 }
 
-func getNumbNodes(db *sql.DB) (varName string, number int, err error) {
-
-	q := "SHOW GLOBAL STATUS LIKE 'wsrep_cluster_size'"
-	err = db.QueryRow(q).Scan(&varName, &number)
-
-	return
-}
-
 func checkNodesCount(mapNodes map[string]int, totalNodes int) error {
 
 	for _, numb := range mapNodes {
@@ -165,15 +141,6 @@ func checkNodesCount(mapNodes map[string]int, totalNodes int) error {
 
 }
 
-func getClusterStatus(db *sql.DB) (varName, value string, err error) {
-
-	q := "SHOW GLOBAL STATUS LIKE 'wsrep_cluster_status'"
-	err = db.QueryRow(q).Scan(&varName, &value)
-
-	return
-
-}
-
 func checkClusterStatus(mapStatus map[string]string) error {
 
 	normalStatus := "Primary"
@@ -182,10 +149,9 @@ func checkClusterStatus(mapStatus map[string]string) error {
 		if status == normalStatus {
 			continue
 		}
-		if status != normalStatus {
-			return fmt.Errorf("Nodes status not primary on %s", serverName)
-		}
+
+		return fmt.Errorf("Nodes status not primary on %s", serverName)
+
 	}
 	return nil
-
 }
