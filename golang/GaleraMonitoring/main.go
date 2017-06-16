@@ -83,6 +83,18 @@ func main() {
 		fmt.Printf("Nodes count mismatched %s", err)
 	}
 
+	// Get Cluster Status
+	for srvName, db := range dbList {
+		_, status, err := getClusterStatus(db)
+		if err != nil {
+			log.Fatalf("Impossible to get cluster status %s", err)
+		} else {
+			log.Printf("%v status : %v", srvName, status)
+		}
+	}
+
+	// Check if status is != Primary
+
 }
 
 func getVersion(db *sql.DB) (version string, err error) {
@@ -145,5 +157,14 @@ func checkNodesCount(mapNodes map[string]int, totalNodes int) error {
 	}
 
 	return nil
+
+}
+
+func getClusterStatus(db *sql.DB) (varName, value string, err error) {
+
+	q := "SHOW GLOBAL STATUS LIKE 'wsrep_cluster_status'"
+	err = db.QueryRow(q).Scan(&varName, &value)
+
+	return
 
 }
