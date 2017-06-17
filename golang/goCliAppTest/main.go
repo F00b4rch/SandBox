@@ -72,6 +72,25 @@ func main() {
 		},
 	})
 
+	// Try function to test isLogin()
+	shell.AddCmd(&ishell.Cmd{
+		Name: "getInfo",
+		Help: "get servers informations",
+
+		Func: func(c *ishell.Context) {
+			isLogin(c)
+		},
+
+	})
+
 	// Start Shell
 	shell.Run()
+}
+
+// If func need to be login in before start
+func isLogin(c *ishell.Context) {
+	if login == logout {
+		c.Println("You need to be login in (use login to connect)")
+		return
+	}
 }
