@@ -1,7 +1,5 @@
-// This program have two mains : 
-// Let's do it simple
-// - Monitore website with http get
-// - Monitore host with ICMP
+// This program have one main
+// - Monitore website with http get status code answer
 package main
 
 import (
@@ -16,9 +14,9 @@ const okStatus int = 200
 func main() {
 
 	mapSites := map[string]string{
-		"youtube": "http://youtube.com/ceuits",
+		"youtube": "http://youtube.com",
 		"google": "http://google.com",
-		"yahoo": "http://yahoo.com/etusir",
+		"yahoo": "http://yahoo.com",
 	}
 
 	mapSatusCode := map[string]int{}
