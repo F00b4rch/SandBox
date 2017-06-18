@@ -11,26 +11,18 @@ import (
 
 func main() {
 
-	// create new shell.
-	// by default, new shell includes 'exit', 'help' and 'clear' commands.
 	shell := ishell.New()
-
-	// display welcome info.
-	shell.Println("\n\nWelcome in CliOvhApi App !\n" +
-		"Made with Love by F00b4rch\n" +
-		"https://github.com/F00b4rch\n" +
-		"\n type help for infos\n")
 
 	// AutoConnect to API
 	shell.Print("Connecting to your API ...\t")
-	time.Sleep(1500* time.Millisecond)
+	time.Sleep(1500 * time.Millisecond)
 	client, err := ovh.NewEndpointClient("ovh-eu")
 	if err != nil {
-		shell.Printf("Error: %q\n" +
-			"\nThe client will successively attempt to locate this configuration file in \n\n" +
-		"- Current working directory: ./ovh.conf\n" +
-		"- Current user's home directory ~/.ovh.conf\n" +
-		"- System wide configuration /etc/ovh.conf\n\n" +
+		shell.Printf("Error: %q\n"+
+			"\nThe client will successively attempt to locate this configuration file in \n\n"+
+			"- Current working directory: ./ovh.conf\n"+
+			"- Current user's home directory ~/.ovh.conf\n"+
+			"- System wide configuration /etc/ovh.conf\n\n"+
 			"Please refer to this documentation : https://github.com/ovh/go-ovh", err)
 		return
 	}
@@ -61,6 +53,18 @@ func main() {
 	// Print the validation URL and the Consumer key
 	fmt.Printf("Generated consumer key: %s\n", response.ConsumerKey)
 	fmt.Printf("Please visit %s to validate it\n", response.ValidationURL) */
+
+	// create new shell.
+	// by default, new shell includes 'exit', 'help' and 'clear' commands.
+	//shell := ishell.New()
+
+	// display welcome info.
+	shell.Println("\n\nWelcome in CliOvhApi App !\n" +
+		"Made with Love by F00b4rch\n" +
+		"https://github.com/F00b4rch\n" +
+		"\n type help for infos\n")
+
+
 
 	shell.AddCmd(&ishell.Cmd{
 		Name: "vps_ls",
