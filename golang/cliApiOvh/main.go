@@ -6,12 +6,8 @@ import (
 	"fmt"
 	"time"
 	"strings"
-	"log"
+	"github.com/F00b4rch/SandBox/golang/cliApiOvh/apiFunc"
 )
-
-type PartialMe struct {
-	Firstname string `json:"firstname"`
-}
 
 func main() {
 
@@ -40,7 +36,7 @@ func main() {
 	}
 
 	shell.Println("[OK]")
-	usr, err := whoamI(client)
+	usr, err := apiFunc.WhoamI(client)
 	if err != nil {
 		fmt.Errorf("No user found %v", err)
 	}
@@ -66,14 +62,12 @@ func main() {
 	fmt.Printf("Generated consumer key: %s\n", response.ConsumerKey)
 	fmt.Printf("Please visit %s to validate it\n", response.ValidationURL) */
 
-
-
 	shell.AddCmd(&ishell.Cmd{
 		Name: "vps_ls",
 		Help: "list all vps",
 
 		Func: func(c *ishell.Context) {
-			getVpsList(client)
+			apiFunc.GetVpsList(client)
 		},
 	})
 
@@ -82,7 +76,7 @@ func main() {
 		Help: "display current connected user",
 
 		Func: func(c *ishell.Context) {
-			usr, err := whoamI(client)
+			usr, err := apiFunc.WhoamI(client)
 			if err != nil {
 				shell.Println("No user found")
 			}
@@ -97,7 +91,7 @@ func main() {
 
 		Func: func(c *ishell.Context) {
 			if c.Args != nil {
-				getVpsInfos(client, strings.Join(c.Args, " "))
+				apiFunc.GetVpsInfos(client, strings.Join(c.Args, " "))
 			} else {
 			shell.Println("Please insert your vps name :\nex : infovps vps11111.ovh.net") }
 		},
@@ -108,7 +102,7 @@ func main() {
 		Help: "checking ping",
 
 		Func: func(c *ishell.Context) {
-			err = status(client)
+			err = apiFunc.Status(client)
 			if err != nil {
 				shell.Println(err)
 			} else {
@@ -119,73 +113,5 @@ func main() {
 
 	// Start Shell
 	shell.Run()
-
-}
-
-
-
-
-func whoamI(c *ovh.Client) (user string, err error) {
-	var me PartialMe
-	// Get current API user
-	c.Get("/me", &me)
-	user = me.Firstname
-	if user == "" {
-		err = fmt.Errorf("No user found")
-	}
-	return user, err
-}
-
-func getVpsList(c *ovh.Client) {
-	// Get all the vps services
-	vpsServices := []string{}
-	if err := c.Get("/vps", &vpsServices); err != nil {
-		fmt.Printf("Error: %q\n", err)
-		return
-	}
-
-	// Get the details of each service
-	for i, serviceName := range vpsServices {
-		fmt.Printf("#%d : %+v\n", i+1, serviceName)
-	}
-}
-
-func getVpsInfos(c *ovh.Client, vpsName string) {
-
-	vpsServices := []string{}
-	if err := c.Get("/vps/", &vpsServices); err != nil {
-	fmt.Printf("Error: %q\n", err)
-	return
-	}
-
-	type vpsInfos struct {
-	Cluster   string `json:"cluster"`
-	Memlimit int `json:"memoryLimit"`
-	NetbootMode  string	`json:"netbootMode"`
-	Zone string `json:"zone"`
-	Name string `json:"name"`
-	//Model string `json:"model"`
-	// Insert the other properties here
-	}
-
-	// Get the details of each service
-	vps := vpsInfos{}
-	url := "/vps/" + vpsName
-
-	if err := c.Get(url, &vps); err != nil {
-	fmt.Printf("Error: %q\n", err)
-	return
-	}
-	fmt.Printf("%v\n", vps)
-
-}
-
-func status(c *ovh.Client) (err error){
-
-	err = c.Ping()
-	if err != nil {
-		log.Println(err)
-	}
-	return err
 
 }
