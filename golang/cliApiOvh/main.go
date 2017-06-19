@@ -32,7 +32,7 @@ func main() {
 	if err != nil {
 		fmt.Errorf("No user found %v", err)
 	}
-	shell.Printf("Welcome %v\n\n", usr)
+	shell.Printf("\nWelcome %v\n", usr)
 
 	/*
 	ckReq := client.NewCkRequest()
