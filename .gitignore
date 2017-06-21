@@ -1,0 +1,17 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
+Supprimerait .gitignore
+Supprimerait .idea/SandBox.iml
+Supprimerait .idea/inspectionProfiles/
+Supprimerait .idea/libraries/
+Supprimerait .idea/misc.xml
+Supprimerait .idea/modules.xml
+Supprimerait .idea/workspace.xml
+Supprimerait golang/netHttp/graph/

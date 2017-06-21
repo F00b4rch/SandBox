@@ -36,7 +36,7 @@ func GetVpsInfos(c *ovh.Client, vpsName string) {
 		NetbootMode  string	`json:"netbootMode"`
 		Zone string `json:"zone"`
 		Name string `json:"name"`
-		//Model string `json:"model"`
+		//Model string  `json:"model"`
 		// Insert the other properties here
 	}
 
