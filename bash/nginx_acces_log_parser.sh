@@ -3,7 +3,7 @@
 #
 #          FILE: pars.sh
 # 
-#         USAGE: ./pars.sh 
+#         USAGE: ./pars.sh file
 # 
 #   DESCRIPTION: 
 # 
