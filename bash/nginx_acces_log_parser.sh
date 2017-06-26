@@ -36,3 +36,6 @@ cat $file | awk '{print $7}' > requests
 sort requests | uniq -c | sort -n -r | head -10
 
 rm requests
+
+echo -ne'\n\n***** REQUETES /h *****\n\n'
+for i in $(seq 0 9) ; do echo -ne "$i heures\n" ; grep "2017:0$i:" $file | wc -l ; done && for i in $(seq 10 23) ; do echo -ne "$i heures\n" ; grep "2017:$i:" $file | wc -l ; done
