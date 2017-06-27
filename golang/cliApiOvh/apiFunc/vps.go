@@ -1,8 +1,9 @@
 package apiFunc
 
 import (
-	"github.com/ovh/go-ovh/ovh"
 	"fmt"
+
+	"github.com/ovh/go-ovh/ovh"
 )
 
 // This func is listing all vps available in your account
@@ -20,7 +21,6 @@ func GetVpsList(c *ovh.Client) {
 	}
 }
 
-
 // This func is inspecting vps (in args) to get info list
 func GetVpsInfos(c *ovh.Client, vpsName string) {
 
@@ -30,14 +30,18 @@ func GetVpsInfos(c *ovh.Client, vpsName string) {
 		return
 	}
 
+	type vpsModel struct {
+		MaximumAdditionnalIP int      `json:"maximumAdditionnalIp"`
+		Datacenter           []string `json:"datacenter"`
+	}
+
 	type vpsInfos struct {
-		Cluster   string `json:"cluster"`
-		Memlimit int `json:"memoryLimit"`
-		NetbootMode  string	`json:"netbootMode"`
-		Zone string `json:"zone"`
-		Name string `json:"name"`
-		//Model string  `json:"model"`
-		// Insert the other properties here
+		Cluster     string   `json:"cluster"`
+		Memlimit    int      `json:"memoryLimit"`
+		NetbootMode string   `json:"netbootMode"`
+		Zone        string   `json:"zone"`
+		Name        string   `json:"name"`
+		Model       vpsModel `json:"model"`
 	}
 
 	// Get the details of each service
