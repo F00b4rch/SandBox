@@ -1,12 +1,13 @@
 package main
 
 import (
+	"fmt"
+	"strings"
+	"time"
+
+	"github.com/F00b4rch/SandBox/golang/cliApiOvh/apiFunc"
 	"github.com/abiosoft/ishell"
 	"github.com/ovh/go-ovh/ovh"
-	"fmt"
-	"time"
-	"strings"
-	"github.com/F00b4rch/SandBox/golang/cliApiOvh/apiFunc"
 )
 
 func main() {
@@ -34,14 +35,13 @@ func main() {
 	}
 	shell.Printf("\nWelcome %v\n", usr)
 
-	/*
-	ckReq := client.NewCkRequest()
+	/*ckReq := client.NewCkRequest()
 
 	// Allow GET method on /me
 	ckReq.AddRules(ovh.ReadOnly, "/me")
 
-	// Allow GET method on /xdsl and all its sub routes
-	ckReq.AddRecursiveRules(ovh.ReadOnly, "/vps")
+	// Allow GET method on /cloud and all its sub routes
+	ckReq.AddRecursiveRules(ovh.ReadOnly, "/cloud")
 
 	// Run the request
 	response, err := ckReq.Do()
@@ -52,7 +52,7 @@ func main() {
 
 	// Print the validation URL and the Consumer key
 	fmt.Printf("Generated consumer key: %s\n", response.ConsumerKey)
-	fmt.Printf("Please visit %s to validate it\n", response.ValidationURL) */
+	fmt.Printf("Please visit %s to validate it\n", response.ValidationURL)*/
 
 	// create new shell.
 	// by default, new shell includes 'exit', 'help' and 'clear' commands.
@@ -64,14 +64,21 @@ func main() {
 		"https://github.com/F00b4rch\n" +
 		"\n type help for infos\n")
 
-
-
 	shell.AddCmd(&ishell.Cmd{
 		Name: "vps_ls",
 		Help: "list all vps",
 
 		Func: func(c *ishell.Context) {
 			apiFunc.GetVpsList(client)
+		},
+	})
+
+	shell.AddCmd(&ishell.Cmd{
+		Name: "pci_project_ls",
+		Help: "list cloud projects",
+
+		Func: func(c *ishell.Context) {
+			apiFunc.GetCloudProjects(client)
 		},
 	})
 
@@ -88,7 +95,6 @@ func main() {
 		},
 	})
 
-
 	shell.AddCmd(&ishell.Cmd{
 		Name: "vps_info",
 		Help: "display vps infos",
@@ -97,7 +103,8 @@ func main() {
 			if c.Args != nil {
 				apiFunc.GetVpsInfos(client, strings.Join(c.Args, " "))
 			} else {
-			shell.Println("Please insert your vps name :\nex : infovps vps11111.ovh.net") }
+				shell.Println("Please insert your vps name :\nex : infovps vps11111.ovh.net")
+			}
 		},
 	})
 
