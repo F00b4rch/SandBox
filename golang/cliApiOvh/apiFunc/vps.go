@@ -53,5 +53,4 @@ func GetVpsInfos(c *ovh.Client, vpsName string) {
 		return
 	}
 	fmt.Printf("%v\n", vps)
-
 }
