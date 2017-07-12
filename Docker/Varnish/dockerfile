@@ -1,0 +1,20 @@
+FROM ubuntu:latest
+MAINTAINER f00b4rch
+
+
+RUN apt-get update -y && \
+  apt-get install -y varnish && \
+  apt-get install -y vim && \
+  apt-get install -y net-tools
+
+RUN sed -i 's/DAEMON_OPTS=\"-a\ :6081/DAEMON_OPTS=\"-a\ :80/g' /etc/default/varnish
+
+ADD default.vcl /etc/varnish/
+
+ADD start /start
+
+EXPOSE 80
+
+RUN chmod 0755 /start
+
+CMD ["/start"]
