@@ -122,7 +122,7 @@ PAS DE PARANO
 -> Et donc adopter des : <-
 
 <br>
--> BONNES PRATIQUES <−
+-> BONNES PRATIQUES <-
 
 -------------------------------------------------
 
