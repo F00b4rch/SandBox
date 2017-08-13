@@ -16,7 +16,7 @@ func main() {
 		log.Printf("error while getting average %s", err)
 	}
 	if avg.Load1 > 5 {
-		fmt.Printf("Waring, load average > 5 : actual load is %v", avg.Load1)
+		fmt.Printf("Warning, load average > 5 : actual load is %v", avg.Load1)
 	}
 
 	// Get Kernel version
