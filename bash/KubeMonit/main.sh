@@ -5,7 +5,7 @@ IFS=$'\n\t'
 #/ Usage: ./main.sh
 #/ Description: This script monitore kubernetes infrastructure
 #/ Examples: ./main.sh
-#/ Options: 
+#/ Options:
 #/   --help: Display this help message
 usage() { grep '^#/' "$0" | cut -c4- ; exit 0 ; }
 expr "$*" : ".*--help" > /dev/null && usage
@@ -20,14 +20,14 @@ fatal()   { echo "$(date -u) [FATAL]   $*" | tee -a "$LOG_FILE" >&2 ; exit 1 ; }
 source config.sh
 
 if [[ "${BASH_SOURCE[0]}" = "$0" ]]; then
-   
-    #/ If root : 
+
+    #/ If root :
 	if [[ $EUID -eq 0 ]]; then
-    	echo "This script must be run as root" 
+    	echo "This script must be run as root"
     	exit 1
     fi
-    
-	#/ Func getting Nodes
+
+	#/ Func getting NODES
     getNodes() {
 		currentNodes=$(kubectl get nodes | grep -Ec '^gke')
 		if [[ "$currentNodes" = "$sumNodes" ]]; then
@@ -37,6 +37,15 @@ if [[ "${BASH_SOURCE[0]}" = "$0" ]]; then
 		fi
 	}
 
+    #/ Function call
 	getNodes
 
-fi			
+    #/ Func verifying STATUS
+    nodeStatus() {
+        for i in $(kubectl get nodes | grep -E '^gke' | awk '{print $1}')
+        do kubectl get nodes $i | grep -E '^gke' | awk '{print $2}'
+        done
+    }
+
+    nodeStatus
+fi
