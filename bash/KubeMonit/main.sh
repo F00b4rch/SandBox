@@ -16,22 +16,11 @@ warning() { echo "$(date -u) [WARNING] $*" | tee -a "$LOG_FILE" >&2 ; }
 error()   { echo "$(date -u) [ERROR]   $*" | tee -a "$LOG_FILE" >&2 ; }
 fatal()   { echo "$(date -u) [FATAL]   $*" | tee -a "$LOG_FILE" >&2 ; exit 1 ; }
 
-#/ sourcing vars:
+#/ Sourcing vars:
 source config.sh
 
-if [[ "${BASH_SOURCE[0]}" = "$0" ]]; then
-
-    #/ If root :
-	if [[ $EUID -eq 0 ]]; then
-    	echo "This script must be run as root"
-    	exit 1
-    fi
-
-
-    while true; do
-
-
-        #/ Func getting NODES
+#/ Functions :
+    #/ Func getting NODES
         getNodes() {
     		currentNodes=$(kubectl get nodes | grep -Ec '^gke')
     		if [[ "$currentNodes" = "$sumNodes" ]]; then
@@ -41,11 +30,8 @@ if [[ "${BASH_SOURCE[0]}" = "$0" ]]; then
     		fi
     	}
 
-        #/ Function call
-    	getNodes
-
-        #/ Func verifying STATUS
-        nodeStatus() {
+        #/ func verifying status
+        nodestatus() {
             nodeName=$(kubectl get nodes | grep -E '^gke' | awk '{print $1}')
             for i in $nodeName
             do status=$(kubectl get nodes $i | grep -E '^gke' | awk '{print $2}')
@@ -57,6 +43,18 @@ if [[ "${BASH_SOURCE[0]}" = "$0" ]]; then
             done
         }
 
+if [[ "${BASH_SOURCE[0]}" = "$0" ]]; then
+
+    #/ If root :
+	if [[ $EUID -eq 0 ]]; then
+    	echo "This script must be run as root"
+    	exit 1
+    fi
+
+    while true; do
+
+        #/ Functions call
+    	getNodes
         nodeStatus
 
         sleep 2
