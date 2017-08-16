@@ -23,22 +23,18 @@ source config.sh
     #/ Func getting NODES
         getNodes() {
     		currentNodes=$(kubectl get nodes | grep -Ec '^gke')
-    		if [[ "$currentNodes" = "$sumNodes" ]]; then
-    			info "Number of nodes gets $currentNodes wanted $sumNodes"
-    		else
+    		if [[ "$currentNodes" != "$sumNodes" ]]; then
     			warning "Number of nodes mismatch, wanted $sumNodes, have $currentNodes"
     		fi
     	}
 
         #/ func verifying status
-        nodestatus() {
+        nodeStatus() {
             nodeName=$(kubectl get nodes | grep -E '^gke' | awk '{print $1}')
             for i in $nodeName
             do status=$(kubectl get nodes $i | grep -E '^gke' | awk '{print $2}')
                 if [ $status != "Ready" ]; then
-                    echo "Fail"
-                else
-                    info "Nodes $i ready"
+                    error "Node $i not ready !"
                 fi
             done
         }
@@ -50,6 +46,8 @@ if [[ "${BASH_SOURCE[0]}" = "$0" ]]; then
     	echo "This script must be run as root"
     	exit 1
     fi
+
+    info "Starting K8sMonit"
 
     while true; do
 
