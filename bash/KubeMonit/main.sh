@@ -27,25 +27,40 @@ if [[ "${BASH_SOURCE[0]}" = "$0" ]]; then
     	exit 1
     fi
 
-	#/ Func getting NODES
-    getNodes() {
-		currentNodes=$(kubectl get nodes | grep -Ec '^gke')
-		if [[ "$currentNodes" = "$sumNodes" ]]; then
-			info "Number of nodes gets $currentNodes wanted $sumNodes"
-		else
-			warning "Number of nodes mismatch, wanted $sumNodes, have $currentNodes"
-		fi
-	}
 
-    #/ Function call
-	getNodes
+    while true; do
 
-    #/ Func verifying STATUS
-    nodeStatus() {
-        for i in $(kubectl get nodes | grep -E '^gke' | awk '{print $1}')
-        do kubectl get nodes $i | grep -E '^gke' | awk '{print $2}'
-        done
-    }
 
-    nodeStatus
+        #/ Func getting NODES
+        getNodes() {
+    		currentNodes=$(kubectl get nodes | grep -Ec '^gke')
+    		if [[ "$currentNodes" = "$sumNodes" ]]; then
+    			info "Number of nodes gets $currentNodes wanted $sumNodes"
+    		else
+    			warning "Number of nodes mismatch, wanted $sumNodes, have $currentNodes"
+    		fi
+    	}
+
+        #/ Function call
+    	getNodes
+
+        #/ Func verifying STATUS
+        nodeStatus() {
+            nodeName=$(kubectl get nodes | grep -E '^gke' | awk '{print $1}')
+            for i in $nodeName
+            do status=$(kubectl get nodes $i | grep -E '^gke' | awk '{print $2}')
+                if [ $status != "Ready" ]; then
+                    echo "Fail"
+                else
+                    info "Nodes $i ready"
+                fi
+            done
+        }
+
+        nodeStatus
+
+        sleep 2
+
+    done
+
 fi
