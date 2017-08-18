@@ -16,14 +16,20 @@ warning() { echo "$(date -u) [WARNING] $*" | tee -a "$LOG_FILE" >&2 ; }
 error()   { echo "$(date -u) [ERROR]   $*" | tee -a "$LOG_FILE" >&2 ; }
 fatal()   { echo "$(date -u) [FATAL]   $*" | tee -a "$LOG_FILE" >&2 ; exit 1 ; }
 
+
 # Cleaning if exit
-cleanup() {
-    rm "$LOG_FILE"
-}
+# cleanup() {
+#     rm "$LOG_FILE"
+# }
 trap cleanup EXIT
 
 
 # Functions 
+
+    # Func mail
+    sendMail() {
+        echo "$(date) : $1 restarted on $HOSTNAME" | mail -s "$1 restarted on $HOSTNAME" "infra@radioking.com"
+    }
 
     # Func nginx
     nginx() {
@@ -35,6 +41,7 @@ trap cleanup EXIT
             if /etc/init.d/nginx restart > /dev/null
             then
                 info "Nginx service restarted"
+                sendMail "nginx"
             fi
     fi
     }
@@ -49,6 +56,7 @@ trap cleanup EXIT
            if /etc/init.d/php5-fpm restart > /dev/null
            then
                info "Php-FPM service restarted"
+               sendMail "php-FPM"
            fi
     fi
     }
@@ -63,6 +71,7 @@ trap cleanup EXIT
             if /etc/init.d/mysql restart > /dev/null 
             then
                 info "Mysql service restarted"
+                sendMail "mysql"
             fi
         fi
     }
@@ -77,6 +86,7 @@ trap cleanup EXIT
             if /etc/init.d/apache2 restart > /dev/null 
             then
                 info "Apache2 service restarted"
+                sendMail "apache2"
             fi
         fi
     }
