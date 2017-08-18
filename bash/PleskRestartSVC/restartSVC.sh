@@ -28,7 +28,7 @@ trap cleanup EXIT
 
     # Func mail
     sendMail() {
-        echo "$(date) : $1 restarted on $HOSTNAME" | mail -s "$1 restarted on $HOSTNAME" "infra@radioking.com"
+        echo "$(date) : $1 restarted on $HOSTNAME" | mail -s "$1 restarted on $HOSTNAME" "my@mail.com"
     }
 
     # Func nginx
