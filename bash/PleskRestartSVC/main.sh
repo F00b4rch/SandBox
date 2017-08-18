@@ -16,12 +16,12 @@ warning() { echo "$(date -u) [WARNING] $*" | tee -a "$LOG_FILE" >&2 ; }
 error()   { echo "$(date -u) [ERROR]   $*" | tee -a "$LOG_FILE" >&2 ; }
 fatal()   { echo "$(date -u) [FATAL]   $*" | tee -a "$LOG_FILE" >&2 ; exit 1 ; }
 
-
+# Debug
 # Cleaning if exit
 # cleanup() {
 #     rm "$LOG_FILE"
 # }
-trap cleanup EXIT
+# trap cleanup EXIT
 
 
 # Functions 
