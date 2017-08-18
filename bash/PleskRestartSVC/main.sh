@@ -35,7 +35,8 @@ trap cleanup EXIT
     nginx() {
     if pgrep nginx > /dev/null
     then
-        info "Nginx service is up."
+#        info "Nginx service is up."
+    :
     else
             warning "Nginx service down, restarting it !"
             if /etc/init.d/nginx restart > /dev/null
@@ -50,7 +51,8 @@ trap cleanup EXIT
     php-fpm() {
     if pgrep php5-fpm > /dev/null
     then
-        info "Php-FPM service is up."
+#        info "Php-FPM service is up."
+    :
     else
            warning "Php-FPM service down, restarting it !"
            if /etc/init.d/php5-fpm restart > /dev/null
@@ -63,32 +65,34 @@ trap cleanup EXIT
 
     # Func mysql
     mysql(){
-        if pgrep mysql > /dev/null
+    if pgrep mysql > /dev/null
+    then
+#        info "Mysql service is up."
+    :
+    else
+        warning "Mysql service down, restarting it !"
+        if /etc/init.d/mysql restart > /dev/null 
         then
-            info "Mysql service is up."
-        else
-            warning "Mysql service down, restarting it !"
-            if /etc/init.d/mysql restart > /dev/null 
-            then
-                info "Mysql service restarted"
-                sendMail "mysql"
-            fi
+            info "Mysql service restarted"
+            sendMail "mysql"
         fi
+    fi
     }
 
     # Func apache
     apache(){
-        if pgrep apache2 > /dev/null
+    if pgrep apache2 > /dev/null
+    then
+#        info "Apache2 service is up."
+    :
+    else
+        warning "Apache2 service down, restarting it !"
+        if /etc/init.d/apache2 restart > /dev/null 
         then
-            info "Apache2 service is up."
-        else
-            warning "Apache2 service down, restarting it !"
-            if /etc/init.d/apache2 restart > /dev/null 
-            then
-                info "Apache2 service restarted"
-                sendMail "apache2"
-            fi
+            info "Apache2 service restarted"
+            sendMail "apache2"
         fi
+    fi
     }
 
 if [[ "${BASH_SOURCE[0]}" = "$0" ]]; then
