@@ -26,7 +26,7 @@ fatal()   { echo "$(date -u) [FATAL]   $*" | tee -a "$LOG_FILE" >&2 ; exit 1 ; }
 info "Starting running..."
 
 while true ; do
-    check=$(uptime | awk '{print $10}' | grep -Eo '^[0-9]')
+    check=$(uptime | awk '{print $10}' | grep -Eo '^[0-9]+')
     if [ "$check" -gt 8 ]; then
         service mysql restart
         info "MySQL service restarted"
