@@ -62,7 +62,25 @@ fatal()   { echo "$(date -u) [FATAL]   $*" | tee -a "$LOG_FILE" >&2 ; exit 1 ; }
            fi
     fi
     }
-
+    
+    # Func curl fpm                                                                                                                                                                                                 
+    curlfpm(){                                                                                                                                                                                                      
+    URL="http://test.test"                                                                                                                                                                                          
+    response=$(curl --write-out %{http_code} --silent --output /dev/null $URL)                                                                                                                                      
+    if [ $response -eq 200 ]                                                                                                                                                                                        
+    then                                                                                                                                                                                                            
+        info "HTTP code is OK."                                                                                                                                                                                     
+    :                                                                                                                                                                                                               
+    else                                                                                                                                                                                                            
+        warning "HTTP code not 200 : $response"                                                                                                                                                                     
+        if /etc/init.d/php5-fpm restart > /dev/null                                                                                                                                                                 
+        then                                                                                                                                                                                                        
+            info "PHP-fpm service restarted"                                                                                                                                                                        
+            sendMail "PHP-fpm curl code"                                                                                                                                                                            
+        fi                                                                                                                                                                                                          
+    fi                                                                                                                                                                                                              
+    }              
+    
     # Func mysql
     mysql(){
     if pgrep mysql > /dev/null
