@@ -27,6 +27,7 @@ docker_id=$(docker ps -aq)
 
 while true ; do 
 
+# replace 2 with number CT expected
 if [ $(docker ps -q | wc -l | grep 2) ] ; then
 	:
 else
