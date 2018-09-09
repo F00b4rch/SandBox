@@ -1,5 +1,0 @@
-#F00b4rch
-FROM perl
-COPY . /usr/src/perl/
-WORKDIR /usr/src/perl/
-CMD [ "perl", "./hello.pl" ]
