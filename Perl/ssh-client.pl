@@ -8,7 +8,7 @@ use strict;
 use Net::SSH::Perl;
 
 # Starting
-print("Initialize connexion...\n");
+print("[INFO] Initialize connexion...\n");
 
 =begin
 Please see full documentation here : 
@@ -25,9 +25,8 @@ my $host = $ENV{'HOST'};;
 my $username = $ENV{'USERNAME'};
 my $password = $ENV{'PASSWORD'};
 
-print($host);
 my $ssh = Net::SSH::Perl->new($host);
-print("Connexion success!\nBegin authentification...");
+print("[OK] Connexion success!\n[INFO]Begin authentification...\n");
 
 $ssh->login($username,$password);
 
@@ -40,5 +39,5 @@ if ($stderr ne "")
     print('Error while executing $command : $stderr');
 }
 print $stdout;
-
+print("[INFO] Exit.")
 exit;
