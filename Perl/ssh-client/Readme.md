@@ -16,4 +16,4 @@ Test with :
 `docker run -it --rm perl-ssh /bin/bash`
 
 You will be able to type :
-`HOST='xx.xx.xx.xx' USERNAME='user' PASSWORD='pass' CMD='command' perl ssh-client.pl`
+`HOST='xx.xx.xx.xx' ; USERNAME='user' ; PASSWORD='pass' ; CMD='command' ; perl ssh-client.pl`
