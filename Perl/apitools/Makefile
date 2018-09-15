@@ -1,10 +1,14 @@
 SHELL := /bin/bash 
 
-start:
-		sudo docker build -t perlapitools . && \
-		sudo docker run --name running-perlapitools -p 8080:8080 perlapitools
+build:
+		sudo docker build -t perlapitools .
+		
+runct:
+		sudo docker run -it --rm --name running-perlapitools -p 8080:8080 -v "${PWD}"/:/usr/src/perl/ perlapitools /bin/bash start.sh
 
-clean:
+rmct:
 		sudo docker stop running-perlapitools
 		sudo docker rm running-perlapitools
+
+rmi:
 		sudo docker rmi perlapitools
