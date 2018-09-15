@@ -1,8 +1,10 @@
 SHELL := /bin/bash 
 
-build:
+start:
 		sudo docker build -t perlapitools . && \
 		sudo docker run --name running-perlapitools -p 8080:8080 perlapitools
 
-delete:
+clean:
+		sudo docker stop running-perlapitools
 		sudo docker rm running-perlapitools
+		sudo docker rmi perlapitools
