@@ -1,27 +1,36 @@
 #!/usr/bin/env perl
+
+package Emp;
+sub new {
+   my $class = shift;
+   my $self = {
+      name => shift,
+      dnsrecord  => shift,
+   };
+
+   bless $self, $class;
+   return $self;
+}
+
+sub TO_JSON { return { %{ shift() } }; }
+
 package main;
 use strict;
 use warnings;
 
-use JSON::Create 'create_json';
 use Net::DNS::Resolver;
 use Mojolicious::Lite;
 
+# GET /
 get '/' => sub {
   my $c = shift;
   $c->render(text => 'Hello World!');
 };
 
-# /Adnsrecord?domain=domain.tld
+# GET /Adnsrecord?domain=domain.tld
 get '/Adnsrecord' => sub {
   my $c    = shift;
   my $domain = $c->param('domain');
-
-  # Defining domain hash
-  my %domainhash = (
-        name => shift,
-        dnsrecord => shift,
-  );
 
   my $res = Net::DNS::Resolver->new(
     nameservers => [qw(8.8.8.8)],
@@ -32,10 +41,8 @@ get '/Adnsrecord' => sub {
     foreach my $rr ($query->answer) {
         next unless $rr->type eq "A";
         my $res = $rr->address;
-        $domainhash{name} = "$domain";
-        $domainhash{dnsrecord} = "$res";
-        my $result = create_json(\%domainhash);
-        $c->render(json =>$result);
+        my $e = new Emp( "$domain", "$res");
+        $c->render(json =>$e);
     }
 
   }

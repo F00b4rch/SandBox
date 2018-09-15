@@ -4,7 +4,6 @@ FROM perl
 WORKDIR /usr/src/perl/
 RUN curl -L https://cpanmin.us | perl - -M https://cpan.metacpan.org -n Mojolicious &&\
     cpanm Net::DNS::Resolver &&\
-    cpanm JSON::Create
 #    chmod +x /usr/src/perl/start.sh &&\
 #    chmod +x /usr/src/perl/apitools.pl  
 EXPOSE  8080
