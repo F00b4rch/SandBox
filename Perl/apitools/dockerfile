@@ -1,10 +1,11 @@
 #F00b4rch
 FROM perl
-COPY . /usr/src/perl/
+#COPY . /usr/src/perl/
 WORKDIR /usr/src/perl/
 RUN curl -L https://cpanmin.us | perl - -M https://cpan.metacpan.org -n Mojolicious &&\
     cpanm Net::DNS::Resolver &&\
-    chmod +x /usr/src/perl/start.sh &&\
-    chmod +x /usr/src/perl/apitools.pl  
+    cpanm JSON::Create
+#    chmod +x /usr/src/perl/start.sh &&\
+#    chmod +x /usr/src/perl/apitools.pl  
 EXPOSE  8080
-CMD [ "/bin/bash", "start.sh" ]
+#CMD [ "/bin/bash", "start.sh" ]
