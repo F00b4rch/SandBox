@@ -2,11 +2,10 @@
 FROM perl
 
 ##################
-# REPLACE ME
-ENV HOST xx.xx.xx.xx
-ENV USERNAME user
-ENV PASSWORD pass
-ENV CMD uptime
+# ENV HOST=''
+# ENV USERNAME=''
+# ENV PASSWORD=''
+# ENV CMD=''
 ##################
 
 RUN cpanm Net::SSH::Perl 
