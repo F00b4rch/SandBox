@@ -14,9 +14,11 @@ get '/' => sub {
 get '/Adnsrecord' => sub {
   my $c    = shift;
   my $domain = $c->param('domain');
+  
   my $res = Net::DNS::Resolver->new(
-  nameservers => [qw(8.8.8.8)],
+    nameservers => [qw(8.8.8.8)],
   );
+  
   my $query = $res->search($domain);
   
   if ($query) {
