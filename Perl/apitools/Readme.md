@@ -1,12 +1,10 @@
 ### How to use
 First build the image :
-`$ docker build -t perlapitools .`
+`$ make build`
 
 Then run :
 ```
-$ docker run --name running-perlapitools -p 8080:8080 perlapitools
+$ make runct 
 ```
 
-Debug with :
-
-`$ docker run -it --rm perlapitools /bin/bash`
+See Makefile for more info.
