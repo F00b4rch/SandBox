@@ -4,7 +4,7 @@ First build the image :
 
 Then run :
 ```
-$ docker run -it --rm --name running-perlapitools perlapitools
+$ docker run --name running-perlapitools -p 8080:8080 perlapitools
 ```
 
 Debug with :
