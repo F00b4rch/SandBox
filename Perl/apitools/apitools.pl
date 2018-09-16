@@ -1,11 +1,11 @@
 #!/usr/bin/env perl
 
 package Emp;
-sub new {
+sub dns {
    my $class = shift;
    my $self = {
-      name => shift,
-      dnsrecord  => shift,
+      domain => shift,
+      A  => shift,
    };
 
    bless $self, $class;
@@ -27,26 +27,27 @@ get '/' => sub {
   $c->render(text => 'Hello World!');
 };
 
-# GET /Adnsrecord?domain=domain.tld
-get '/Adnsrecord' => sub {
+# GET /dnsrecord?domain=domain.tld
+get '/dnsrecord' => sub {
   my $c    = shift;
   my $domain = $c->param('domain');
 
   my $res = Net::DNS::Resolver->new(
     nameservers => [qw(8.8.8.8)],
   );
-  my $query = $res->search($domain);
+  my $query = $res->query($domain, 'A');
 
   if ($query) {
     foreach my $rr ($query->answer) {
         next unless $rr->type eq "A";
-        my $res = $rr->address;
-        my $e = new Emp( "$domain", "$res");
+        my $resA = $rr->address;
+        my $e = dns Emp("$domain", "$resA");
         $c->render(json =>$e);
     }
 
   }
   else {
+
     $c->render(json => "Error: no valid domain name found");
     }
 };
